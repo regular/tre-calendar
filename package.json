@@ -1,0 +1,33 @@
+{
+  "name": "tre-calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/regular/tre-calendar.git"
+  },
+  "keywords": [],
+  "author": "Jan Bölsche <jan@lagomorph.de> (https://regular.codes/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/regular/tre-calendar/issues"
+  },
+  "homepage": "https://github.com/regular/tre-calendar#readme",
+  "dependencies": {
+    "collect-mutations": "^1.0.6",
+    "dayjs": "^1.8.13",
+    "module-styles": "^1.0.0",
+    "mutant": "^3.22.1",
+    "pull-merge": "^1.0.4",
+    "pull-stream": "^3.6.10",
+    "tre-dates": "^1.0.1",
+    "tre-endless-list": "^1.0.0",
+    "tre-field-observer": "^1.1.0",
+    "tre-prototypes": "^1.9.0",
+    "tre-string": "^1.0.1"
+  }
+}
