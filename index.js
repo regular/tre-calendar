@@ -73,16 +73,23 @@ module.exports = function(ssb) {
               ({date, time, name})=>{
                 const dj = dayjs(date)
                 let month_year = dj.format('MMMM YYYY')
-                let day = dj.format('ddd, D')
+                let day = dj.format('dddd, D')
                 if (month_year == my) month_year = ''; else my = month_year
                 if (day == d) day = ''; else d = day
-
-                return [
-                  h('span.month-year', month_year),
-                  h('span.day', day),
-                  h('span.time', time),
-                  h('span.name', name)
+                
+                const ret = [
+                  h(`span.name${time ? '' : '.all-day'}`, name)
                 ]
+                if (time) ret.unshift(
+                  h('span.time', time)
+                )
+                if (day) ret.unshift(
+                  h('span.day', day)
+                )
+                if (month_year) ret.unshift(
+                  h('span.month-year', month_year)
+                )
+                return ret
               }
             )
           })()
