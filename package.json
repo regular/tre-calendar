@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape test/**"
   },
   "repository": {
     "type": "git",
@@ -24,10 +24,13 @@
     "mutant": "^3.22.1",
     "pull-merge": "^1.0.4",
     "pull-stream": "^3.6.10",
-    "tre-dates": "^1.0.1",
+    "tre-dates": "^2.0.0",
     "tre-endless-list": "^1.0.0",
     "tre-field-observer": "^1.1.0",
     "tre-prototypes": "^1.9.0",
     "tre-string": "^1.0.1"
+  },
+  "devDependencies": {
+    "tape": "^4.10.1"
   }
 }

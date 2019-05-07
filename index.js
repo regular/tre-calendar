@@ -8,14 +8,16 @@ const Value = require('mutant/computed')
 const List = require('tre-endless-list')
 const Source = require('tre-dates/source')
 const styles = require('module-styles')('tre-dates')
-const dayjs = require('dayjs')
 const collectMutations = require('collect-mutations')
 const pull = require('pull-stream')
 const WatchMerged = require('tre-prototypes')
 const merge = require('pull-merge')
+const compareDates = require('./compare-dates')
+//const formatDate = require('tre-dates/format')
+const dayjs = require('dayjs').extend(require('dayjs/plugin/localizedFormat'))
 
 module.exports = function(ssb) {
-  const dateSource = Source(ssb)
+  const getSourceObs = Source(ssb)
   const watchMerged = WatchMerged(ssb)
 
   return function(kv, ctx) {
@@ -38,16 +40,14 @@ module.exports = function(ssb) {
       })
     }, {comparer: kvcomp})
 
-    const sources = MutantMap(mergedDates, kvObs => {
-      console.log('kvObs', kvObs())
-      return computed(kvObs, kv =>{
-        return dateSource(kv, {})
+    const source = computed(mergedDates, kvs => {
+      console.log('kvs', kvs)
+      if (!kvs.length) return {source: pull.empty()}
+      const sourcesObs = kvs.map(kv => getSourceObs(kv, {}))
+      return computed(sourcesObs, function() {
+        const sources = Array.from(arguments).map(s => s.source())
+        return {source: merge(sources, compareDates)}
       })
-    })
-
-    const source = computed(sources, sources =>{
-      if (!sources.length) return {source: pull.empty()}
-      return {source: merge(sources.map( ({source}) => source), compareDates)}
     })
 
     const drain = collectMutations(dates, {sync: true})
@@ -65,25 +65,35 @@ module.exports = function(ssb) {
     }, [
       renderStr(fields.get('name', 'no name')),
       computed(source, ({source}) => {
-        return List(source, null, ({date, name}) => {
-          return h('li', `${date} ${name}`)
-        })
+        const formattedSource = pull(
+          source,
+          (()=>{
+            let my, d
+            return pull.map(
+              ({date, time, name})=>{
+                const dj = dayjs(date)
+                let month_year = dj.format('MMMM YYYY')
+                let day = dj.format('ddd, D')
+                if (month_year == my) month_year = ''; else my = month_year
+                if (day == d) day = ''; else d = day
+
+                return [
+                  h('span.month-year', month_year),
+                  h('span.day', day),
+                  h('span.time', time),
+                  h('span.name', name)
+                ]
+              }
+            )
+          })()
+        )
+        return List(formattedSource, null, x => x)
       })
     ])
   }
 }
 
 // -- utils
-
-function dts(a) {
-  d = a.date.replace(/^..., /, '')
-  return `${d}${a.name}`
-}
-
-function compareDates(a,b) {
-  if (dts(a) < dts(b)) return -1
-  return 1
-}
 
 function kvcomp(a,b) {
   a = typeof a == 'function' ? a() : a
