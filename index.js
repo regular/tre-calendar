@@ -52,7 +52,7 @@ module.exports = function(ssb) {
 
     const drain = collectMutations(dates, {sync: true})
     pull(
-      ssb.revisions.messagesByBranch(revisionRoot(kv), {live: true, sync: true}),
+      ctx.source || ssb.revisions.messagesByBranch(revisionRoot(kv), {live: true, sync: true}),
       drain
     )
 
